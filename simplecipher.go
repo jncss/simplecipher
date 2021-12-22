@@ -1,8 +1,12 @@
 package simplecipher
 
 import (
+	"bytes"
+	"compress/zlib"
+	b64 "encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
+	"io/ioutil"
 	"math/rand"
 	"time"
 )
@@ -85,6 +89,52 @@ func DecryptString(text, key string) (string, error) {
 	data, err := hex.DecodeString(text)
 	if err == nil {
 		return string(Decrypt(data, []byte(key))), nil
+	}
+
+	return "", err
+}
+
+// EncryptStringB64 Xifrar string
+func EncryptStringB64(text, key string) string {
+	encryptedText := Encrypt([]byte(text), []byte(key))
+
+	return b64.StdEncoding.EncodeToString(encryptedText)
+}
+
+// DecryptStringB64 Desxifrar string
+func DecryptStringB64(text, key string) (string, error) {
+	data, err := b64.StdEncoding.DecodeString(text)
+	if err == nil {
+		return string(Decrypt(data, []byte(key))), nil
+	}
+
+	return "", err
+}
+
+// EncryptStringZB64 Xifrar string
+func EncryptStringZB64(text, key string) string {
+	encryptedText := Encrypt([]byte(text), []byte(key))
+
+	var in bytes.Buffer
+	w := zlib.NewWriter(&in)
+	w.Write(encryptedText)
+	w.Close()
+
+	return b64.StdEncoding.EncodeToString(in.Bytes())
+}
+
+// DecryptStringZB64 Desxifrar string
+func DecryptStringZB64(text, key string) (string, error) {
+	data, err := b64.StdEncoding.DecodeString(text)
+
+	if err == nil {
+		r, err := zlib.NewReader(bytes.NewReader(data))
+		if err == nil {
+			data, err = ioutil.ReadAll(r)
+			if err == nil {
+				return string(Decrypt(data, []byte(key))), nil
+			}
+		}
 	}
 
 	return "", err
