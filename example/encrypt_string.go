@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	key := "func main()"
+	key := "A un pi xic escala no li cal"
 
 	plainText := "Proves de xifrat!!!"
 	fmt.Println(plainText)
@@ -18,6 +18,4 @@ func main() {
 
 	decryptedText, _ := simplecipher.DecryptStringB64(encryptedText, key)
 	fmt.Println(decryptedText)
-
-	fmt.Println(simplecipher.DecryptString("dfa49019e2fe40e1fdc93fcafb3171a8f4bfec8dd4453166", "func main()"))
 }
